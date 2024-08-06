@@ -15,16 +15,10 @@ export async function GET(req) {
         })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
-        .setExpirationTime('30s')
+        .setExpirationTime('10s')
         .sign(jwtSecretKey);
 
         const response = NextResponse.json({ newAccessToken });
-
-        response.cookies.set({
-            name: 'accessToken',
-            value: newAccessToken,
-            path: '/'
-        });
 
         return response;
     }

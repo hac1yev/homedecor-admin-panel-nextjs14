@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { verifyRefreshToken } from './lib/auth';
 
 const authPages = ['/login','/register'];
 
@@ -6,10 +7,12 @@ const isAuthPage = (url) => authPages.includes(url)
  
 export async function middleware(request) {
     const { url,nextUrl,cookies } = request; 
-    const accessToken = cookies.get("accessToken");
+    const refreshToken = cookies.get("refreshToken");
+
+    const isValidRefreshToken = await verifyRefreshToken(refreshToken?.value);    
 
     if(nextUrl.pathname === '/') {
-        if(accessToken?.value) {
+        if(isValidRefreshToken) {
             return NextResponse.redirect(new URL("/dashboard", url));
         }else{
             return NextResponse.redirect(new URL("/login", url))
@@ -17,7 +20,7 @@ export async function middleware(request) {
     }
 
     if(nextUrl.pathname.startsWith('/dashboard')) {
-        if(accessToken?.value) {
+        if(isValidRefreshToken) {
             return NextResponse.next();
         }else{
             return NextResponse.redirect(new URL("/login", url));
@@ -27,9 +30,9 @@ export async function middleware(request) {
     const isAuthPageRequested = isAuthPage(nextUrl.pathname);
 
     if(isAuthPageRequested) {
-        if(accessToken?.value) {
+        if(isValidRefreshToken) {
             const response = NextResponse.redirect(new URL('/dashboard', url));
-            return response;
+            return response;                        
         }else{
             return NextResponse.next();
         }

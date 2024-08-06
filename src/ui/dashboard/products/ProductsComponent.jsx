@@ -6,8 +6,30 @@ import styles from '../../../ui/dashboard/products/products.module.css';
 import Pagination from "../pagination/pagination";
 import Image from "next/image";
 import customLoader from "@/src/ui/custom-loader";
+import { useEffect, useState } from "react";
+import useAxiosPrivate from "@/src/hooks/useAxiosPrivate";
 
-const ProductsComponent = ({ products,count }) => {  
+const ProductsComponent = ({ q, page }) => { 
+  const [products,setProducts] = useState([]); 
+  const [count,setCount] = useState(0); 
+  const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
+    (async function() {
+      try {
+        const response = await axiosPrivate.get(`/api/product`, {
+          params: {q,page}
+        });
+
+        setProducts(response.data.products);
+        setCount(response.data.count);
+        
+      } catch (error) {
+        console.log(error);
+      }
+    })()
+  }, [axiosPrivate, page, q]);
+
   return (
       <div className={styles.container}>
       <div className={styles.top}>

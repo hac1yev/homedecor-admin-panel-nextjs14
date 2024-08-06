@@ -24,6 +24,8 @@ const LoginForm = () => {
         }
       });
 
+      window.localStorage.setItem("accessToken", response.data.accessToken);
+      
       if(response.status === 200) {
         navigate.push('/dashboard');
         window.location.reload();

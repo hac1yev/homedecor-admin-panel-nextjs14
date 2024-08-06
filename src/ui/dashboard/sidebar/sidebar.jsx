@@ -44,7 +44,7 @@ const Sidebar = () => {
             <Image loader={customLoader} className={styles.userImage} src={"/noavatar.png"} alt="" priority width="50" height="50" />
             <div className={styles.userDetail}>
                 <span className={styles.username}></span>
-                <span className={styles.userTitle}>Administrator</span>
+                <span className={styles.userTitle}>HOMEDECOR ADMIN PANEL</span>
             </div>
         </div>
         <ul className={styles.list}>

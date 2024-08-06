@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/eslint-plugin-next": "14.0.1",
+    "@reduxjs/toolkit": "^2.2.7",
     "axios": "^1.7.3",
     "bcrypt": "^5.1.1",
     "jose": "^5.6.3",
@@ -20,6 +21,7 @@
     "react": "18",
     "react-dom": "18",
     "react-icons": "^4.11.0",
+    "react-redux": "^9.1.2",
     "recharts": "^2.12.2",
     "use-debounce": "^9.0.4"
   },

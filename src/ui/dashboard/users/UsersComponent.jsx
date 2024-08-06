@@ -5,8 +5,30 @@ import Search from "../../../ui/dashboard/search/search";
 import styles from "../../../ui/dashboard/users/users.module.css";
 import Image from "next/image";
 import customLoader from "@/src/ui/custom-loader";
+import { useEffect, useState } from "react";
+import useAxiosPrivate from "@/src/hooks/useAxiosPrivate";
 
-const UsersComponent = ({ users,count }) => {    
+const UsersComponent = ({ q,page }) => {
+  const axiosPrivate = useAxiosPrivate();
+  const [users,setUsers] = useState([]); 
+  const [count,setCount] = useState(0); 
+
+  useEffect(() => {
+    (async function() {
+      try {
+        const response = await axiosPrivate.get("/api/user", {
+          params: {q, page}
+        });
+
+        setUsers(response.data.users);
+        setCount(response.data.count);
+        
+      } catch (error) {
+        console.log(error);
+      }
+    })()
+  }, [axiosPrivate,q,page]);
+
   return (
     <div className={styles.container}>
       <div className={styles.top}>

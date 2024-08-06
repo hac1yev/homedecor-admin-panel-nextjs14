@@ -9,12 +9,14 @@ import { useEffect, useState } from "react";
 import useAxiosPrivate from "@/src/hooks/useAxiosPrivate";
 
 const UsersComponent = ({ q,page }) => {
-  const axiosPrivate = useAxiosPrivate();
+  const [isLoading,setIsLoading] = useState(true);
   const [users,setUsers] = useState([]); 
   const [count,setCount] = useState(0); 
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     (async function() {
+      setIsLoading(true);
       try {
         const response = await axiosPrivate.get("/api/user", {
           params: {q, page}
@@ -26,8 +28,11 @@ const UsersComponent = ({ q,page }) => {
       } catch (error) {
         console.log(error);
       }
+      setIsLoading(false);
     })()
   }, [axiosPrivate,q,page]);
+
+  
 
   return (
     <div className={styles.container}>
@@ -92,6 +97,16 @@ const UsersComponent = ({ q,page }) => {
             ))}
         </tbody>
       </table>
+      {isLoading && (
+        <div className="flex-center" style={{ margin: '20px 0' }}>
+          Loading...
+        </div>
+      )}
+      {!isLoading && users.length === 0 && (
+        <div className="flex-center" style={{ margin: '20px 0' }}>
+          There is no user!
+        </div>
+      )}
       <Pagination count={count} />
     </div>
   );

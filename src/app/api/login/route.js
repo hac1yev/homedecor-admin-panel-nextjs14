@@ -29,7 +29,7 @@ export async function POST(req) {
     })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('10s')
+    .setExpirationTime('30s')
     .sign(jwtSecretKey);
 
     const refreshToken = await new SignJWT({ 
@@ -37,7 +37,7 @@ export async function POST(req) {
     })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('30s')
+    .setExpirationTime('30d')
     .sign(refreshSecretKey);
                                                                         
     const response = NextResponse.json({ message: "Login successfully!", accessToken }, { status: 200 });

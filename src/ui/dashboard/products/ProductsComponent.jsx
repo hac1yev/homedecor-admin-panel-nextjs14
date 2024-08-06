@@ -2,36 +2,38 @@
 
 import Search from "../search/search";
 import Link from "next/link";
-import styles from '../../../ui/dashboard/products/products.module.css';
+import styles from "../../../ui/dashboard/products/products.module.css";
 import Pagination from "../pagination/pagination";
 import Image from "next/image";
 import customLoader from "@/src/ui/custom-loader";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "@/src/hooks/useAxiosPrivate";
 
-const ProductsComponent = ({ q, page }) => { 
-  const [products,setProducts] = useState([]); 
-  const [count,setCount] = useState(0); 
+const ProductsComponent = ({ q, page }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [count, setCount] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
-    (async function() {
+    (async function () {
+      setIsLoading(true);
       try {
         const response = await axiosPrivate.get(`/api/product`, {
-          params: {q,page}
+          params: { q, page },
         });
 
         setProducts(response.data.products);
         setCount(response.data.count);
-        
       } catch (error) {
         console.log(error);
       }
-    })()
+      setIsLoading(false);
+    })();
   }, [axiosPrivate, page, q]);
 
   return (
-      <div className={styles.container}>
+    <div className={styles.container}>
       <div className={styles.top}>
         <Search placeholder="Search for a user..." />
         <Link href="/dashboard/products/add">
@@ -61,39 +63,51 @@ const ProductsComponent = ({ q, page }) => {
             </td>
           </tr>
         </thead>
-        <tbody>
+        {!isLoading && (
+          <tbody>
             {products.map((product) => (
               <tr key={product._id}>
                 <td>
-                    <div className={styles.product}>
-                        <Image 
-                          className={styles.productImage} 
-                          src={product.image || "/noproduct.jpg"} 
-                          loader={customLoader} 
-                          priority 
-                          alt="" 
-                          width={40} 
-                          height={40} 
-                        />
-                        {product.title}
-                    </div>
+                  <div className={styles.product}>
+                    <Image
+                      className={styles.productImage}
+                      src={product.image || "/noproduct.jpg"}
+                      loader={customLoader}
+                      priority
+                      alt=""
+                      width={40}
+                      height={40}
+                    />
+                    {product.title}
+                  </div>
                 </td>
-                <td>{product.description.slice(0,10)}</td>
+                <td>{product.description.slice(0, 10)}</td>
                 <td>{product.price}</td>
                 <td>{product.createdAt.toString().slice(0, 10)}</td>
                 <td>{product.views}</td>
-                <td style={{ display: 'flex' }}>
-                    <form>
-                      <input type="hidden" name="id" value={product.id} />
-                      <button className={`${styles.button} ${styles.delete}`}>
-                        Delete
-                      </button>
-                    </form>
+                <td style={{ display: "flex" }}>
+                  <form>
+                    <input type="hidden" name="id" value={product.id} />
+                    <button className={`${styles.button} ${styles.delete}`}>
+                      Delete
+                    </button>
+                  </form>
                 </td>
               </tr>
             ))}
-        </tbody>
+          </tbody>
+        )}
       </table>
+      {isLoading && (
+        <div className="flex-center" style={{ margin: "20px 0" }}>
+          Loading...
+        </div>
+      )}
+      {!isLoading && products.length === 0 && (
+        <div className="flex-center" style={{ marginTop: "20px 0" }}>
+          There is no product!
+        </div>
+      )}
       <Pagination count={count} />
     </div>
   );

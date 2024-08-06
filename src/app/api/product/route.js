@@ -12,7 +12,7 @@ export async function GET(req) {
 
         const token = accessToken.split(" ")[1];
         const tokenIsValid = await verifyAccessToken(token);
-        
+
         if (!tokenIsValid) {
             return new NextResponse({ message: 'Forbidden' }, { status: 403 });
         }
@@ -49,4 +49,55 @@ export async function GET(req) {
     } catch (error) {
         return NextResponse.error({ message: 'Internal Server Error' }, { status: 500 });
     }
+}
+
+export async function POST(req) {
+    const { image, furniture, price, f_collection, title, description } = await req.json();
+    let myNewImage;
+
+    const accessToken = req.headers.get('Authorization');
+    if (!accessToken) {
+        return new NextResponse({ message: 'Authorization header is missing' }, { status: 403 });
+    }
+
+    const token = accessToken.split(" ")[1];
+    const tokenIsValid = await verifyAccessToken(token);
+
+    if (!tokenIsValid) {
+        return new NextResponse({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    // Convert data URL (base64) to binary
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+    const binaryData = Buffer.from(base64Data, 'base64');    
+
+    try {
+      const response = await fetch('https://api.imgur.com/3/image', {
+        method: 'POST',
+        headers: {
+          Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify({
+          image: binaryData.toString('base64'),
+          type: 'base64',
+        }),
+      });
+
+      const responseData = await response.json();
+
+      myNewImage = responseData.data.link;
+
+    } catch (error) {
+      console.log(error);
+    }
+
+    await connectToDB();
+    
+    const newFurniture = new Product({ image: myNewImage, price, title, description, f_collection, furniture });
+
+    await newFurniture.save();
+    await Product.findByIdAndUpdate(newFurniture._id, { $inc: { views: 1 } });
+
+    return Response.json({ message: 'Added' }, { status: 201 });
 }

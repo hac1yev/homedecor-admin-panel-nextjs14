@@ -104,7 +104,7 @@ const ProductsComponent = ({ q, page }) => {
         </div>
       )}
       {!isLoading && products.length === 0 && (
-        <div className="flex-center" style={{ marginTop: "20px 0" }}>
+        <div className="flex-center" style={{ margin: "20px 0" }}>
           There is no product!
         </div>
       )}

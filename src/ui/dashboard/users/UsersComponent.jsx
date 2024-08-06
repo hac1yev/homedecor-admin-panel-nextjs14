@@ -8,31 +8,28 @@ import customLoader from "@/src/ui/custom-loader";
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "@/src/hooks/useAxiosPrivate";
 
-const UsersComponent = ({ q,page }) => {
-  const [isLoading,setIsLoading] = useState(true);
-  const [users,setUsers] = useState([]); 
-  const [count,setCount] = useState(0); 
+const UsersComponent = ({ q, page }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [count, setCount] = useState(0);
   const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
-    (async function() {
+    (async function () {
       setIsLoading(true);
       try {
         const response = await axiosPrivate.get("/api/user", {
-          params: {q, page}
+          params: { q, page },
         });
 
         setUsers(response.data.users);
         setCount(response.data.count);
-        
       } catch (error) {
         console.log(error);
       }
       setIsLoading(false);
-    })()
-  }, [axiosPrivate,q,page]);
-
-  
+    })();
+  }, [axiosPrivate, q, page]);
 
   return (
     <div className={styles.container}>
@@ -62,7 +59,8 @@ const UsersComponent = ({ q,page }) => {
             </td>
           </tr>
         </thead>
-        <tbody>
+        {!isLoading && (
+          <tbody>
             {users.map((user) => (
               <tr key={user._id}>
                 <td>
@@ -83,7 +81,7 @@ const UsersComponent = ({ q,page }) => {
                 <td>{user.username}</td>
                 <td>{user.isAdmin ? "Admin" : "Client"}</td>
                 <td>{user.isActive ? "active" : "passive"}</td>
-                <td style={{ display: 'flex' }}>
+                <td style={{ display: "flex" }}>
                   <div className={styles.buttons}>
                     <form>
                       <input type="hidden" name="id" value={user.id} />
@@ -95,15 +93,16 @@ const UsersComponent = ({ q,page }) => {
                 </td>
               </tr>
             ))}
-        </tbody>
+          </tbody>
+        )}
       </table>
       {isLoading && (
-        <div className="flex-center" style={{ margin: '20px 0' }}>
+        <div className="flex-center" style={{ margin: "20px 0" }}>
           Loading...
         </div>
       )}
       {!isLoading && users.length === 0 && (
-        <div className="flex-center" style={{ margin: '20px 0' }}>
+        <div className="flex-center" style={{ margin: "20px 0" }}>
           There is no user!
         </div>
       )}

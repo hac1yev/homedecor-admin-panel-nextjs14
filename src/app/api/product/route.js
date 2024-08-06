@@ -21,7 +21,7 @@ export async function GET(req) {
         const q = searchParams.get('q') || '';
         const page = parseInt(searchParams.get('page'), 10) || 1;
         const regex = new RegExp(q, "i");        
-        const ITEM_PER_PAGE = 5;
+        const ITEM_PER_PAGE = 8;
 
         await connectToDB();
 

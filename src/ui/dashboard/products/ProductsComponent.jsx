@@ -32,6 +32,19 @@ const ProductsComponent = ({ q, page }) => {
     })();
   }, [axiosPrivate, page, q]);
 
+  const handleDelete = async (id) => {
+    try {
+      await axiosPrivate.delete(`/api/product?id=${id}`);
+
+      const filteredProducts = products.filter((product) => product._id !== id);
+
+      setProducts(filteredProducts);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.top}>
@@ -86,12 +99,12 @@ const ProductsComponent = ({ q, page }) => {
                 <td>{product.createdAt.toString().slice(0, 10)}</td>
                 <td>{product.views}</td>
                 <td style={{ display: "flex" }}>
-                  <form>
-                    <input type="hidden" name="id" value={product.id} />
-                    <button className={`${styles.button} ${styles.delete}`}>
-                      Delete
-                    </button>
-                  </form>
+                  <button 
+                    className={`${styles.button} ${styles.delete}`}
+                    onClick={() => handleDelete(product._id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

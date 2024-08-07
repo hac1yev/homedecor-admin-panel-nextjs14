@@ -51,6 +51,7 @@ export async function GET(req) {
     }
 }
 
+
 export async function POST(req) {
     const { image, furniture, price, f_collection, title, description } = await req.json();
     let myNewImage;
@@ -100,4 +101,29 @@ export async function POST(req) {
     await Product.findByIdAndUpdate(newFurniture._id, { $inc: { views: 1 } });
 
     return Response.json({ message: 'Added' }, { status: 201 });
+}
+
+
+export async function DELETE(req) {
+    const { searchParams } = new URL(req.url)
+
+    const id = searchParams.get("id");
+    
+    const accessToken = req.headers.get('Authorization');
+    if (!accessToken) {
+        return new NextResponse({ message: 'Authorization header is missing' }, { status: 403 });
+    }
+
+    const token = accessToken.split(" ")[1];
+    const tokenIsValid = await verifyAccessToken(token);
+
+    if (!tokenIsValid) {
+        return new NextResponse({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    await connectToDB();
+
+    await Product.deleteOne({ _id: id });
+
+    return NextResponse.json({ message: 'Deleted!' })
 }

@@ -50,3 +50,28 @@ export async function GET(req) {
         return NextResponse.error({ message: 'Internal Server Error' }, { status: 500 });
     }
 }
+
+
+export async function DELETE(req) {
+    const { searchParams } = new URL(req.url);
+
+    const id = searchParams.get("id");
+    
+    const accessToken = req.headers.get('Authorization');
+    if (!accessToken) {
+        return new NextResponse({ message: 'Authorization header is missing' }, { status: 403 });
+    }
+
+    const token = accessToken.split(" ")[1];
+    const tokenIsValid = await verifyAccessToken(token);
+
+    if (!tokenIsValid) {
+        return new NextResponse({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    await connectToDB();
+
+    await User.deleteOne({ _id: id });
+
+    return NextResponse.json({ message: 'Deleted!' })
+}

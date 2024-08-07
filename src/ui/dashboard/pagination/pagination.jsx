@@ -11,7 +11,7 @@ const Pagination = ({ count }) => {
   const page = searchParams.get("page") || 1;
 
   let hasPrev = parseInt(page) > 1;
-  let hasNext = count / 5 > page;
+  let hasNext = count / 8 > page;
 
   const handlePagination = (arg) => {
     if(arg === "prev") {

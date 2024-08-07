@@ -31,6 +31,19 @@ const UsersComponent = ({ q, page }) => {
     })();
   }, [axiosPrivate, q, page]);
 
+  const handleDelete = async (id) => {
+    try {
+      await axiosPrivate.delete(`/api/user?id=${id}`);
+
+      const filteredProducts = users.filter((user) => user._id !== id);
+
+      setUsers(filteredProducts);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.top}>
@@ -82,14 +95,9 @@ const UsersComponent = ({ q, page }) => {
                 <td>{user.isAdmin ? "Admin" : "Client"}</td>
                 <td>{user.isActive ? "active" : "passive"}</td>
                 <td style={{ display: "flex" }}>
-                  <div className={styles.buttons}>
-                    <form>
-                      <input type="hidden" name="id" value={user.id} />
-                      <button className={`${styles.button} ${styles.delete}`}>
-                        Delete
-                      </button>
-                    </form>
-                  </div>
+                  <button className={`${styles.button} ${styles.delete}`} onClick={() => handleDelete(user._id)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

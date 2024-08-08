@@ -29,6 +29,13 @@
     padding: 10px;
   }
   
+  .table .tableRowLink {
+    display: table-row;
+    vertical-align: inherit;
+    unicode-bidi: isolate;
+    border-color: inherit;
+  }
+
   .user{
     display: flex;
     align-items: center;

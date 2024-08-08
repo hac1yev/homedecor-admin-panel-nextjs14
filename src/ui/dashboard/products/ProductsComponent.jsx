@@ -32,7 +32,7 @@ const ProductsComponent = ({ q, page }) => {
     })();
   }, [axiosPrivate, page, q]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id) => {    
     try {
       await axiosPrivate.delete(`/api/product?id=${id}`);
 
@@ -79,7 +79,7 @@ const ProductsComponent = ({ q, page }) => {
         {!isLoading && (
           <tbody>
             {products.map((product) => (
-              <tr key={product._id}>
+              <Link href={`/dashboard/products/${product._id}`} key={product._id} className={styles.tableRowLink}>
                 <td>
                   <div className={styles.product}>
                     <Image
@@ -101,12 +101,15 @@ const ProductsComponent = ({ q, page }) => {
                 <td style={{ display: "flex" }}>
                   <button 
                     className={`${styles.button} ${styles.delete}`}
-                    onClick={() => handleDelete(product._id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDelete(product._id);
+                    }}
                   >
                     Delete
                   </button>
                 </td>
-              </tr>
+              </Link>
             ))}
           </tbody>
         )}

@@ -22,6 +22,7 @@ const SingleProductPage = ({ params }) => {
     })()
   }, [id,axiosPrivate]);
 
+  
   if(!product) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '40px 0' }}>
